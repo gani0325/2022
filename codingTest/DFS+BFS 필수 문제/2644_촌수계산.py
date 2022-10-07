@@ -16,25 +16,91 @@
 # 입력에서 요구한 두 사람의 촌수를 나타내는 정수를 출력
 # 어떤 경우에는 두 사람의 친척 관계가 전혀 없어 촌수를 계산할 수 없을 때가 있다. 이때에는 -1을 출력
 
-# n = int(input())
-# a, b = map(int, input().split())
-# t = int(input())
-# for i in range(t) :
-#     p, q = map(int, input().split())
+# 1) dfs
+n = int(input())
+a, b = map(int, input().split())
+t = int(input())
 
-import sys
+graph = [[] for i in range(n+1)]
+visited = [0] * (n+1)
 
-input = sys.stdin.readline
+for i in range(t) :
+    p, q = map(int, input().split())
+    graph[p].append(q)
+    graph[q].append(p)
+
+def dfs(a) :
+	for i in graph[a] :
+		if not visited[i] :
+			visited[i] = visited[a] + 1
+			dfs(i)
+
+dfs(a)
+
+if visited[b] > 0 :
+	print(visited[b])
+else :
+	print(-1)
+
+# # input
+# 9
+# 7 3
+# 7
+# 1 2
+# 1 3
+# 2 7
+# 2 8
+# 2 9
+# 4 5
+# 4 6
+# # result
+# 3
+
+
+# 2) bfs
+from collections import deque
 
 n = int(input())
-c1, c2 = map(int, input().split())
+p, q = map(int, input().split())
 t = int(input())
-visit = [0] * (n + 1)
- 
-g = [[] for _ in range(n + 1)]
-for _ in range(t):
-	p, c = map(int, input().split())
-	g[p].append(c)
-	g[c].append(p)
 
-print(g)
+graph = [[] for _ in range(n+1)]
+visited = [-1] * (n+1)
+
+for i in range(t) :
+	x, y = map(int, input().split())
+	graph[x].append(y)
+	graph[y].append(x)
+
+def bfs() :
+	queue = deque([p])
+	visited[p] = 0
+
+	while queue :
+		result = queue.popleft()
+
+		for i in graph[result] :
+			if visited[i] == -1 :
+				visited[i] = visited[result] + 1
+				queue.append(i)
+
+bfs()
+
+if visited[q] == -1 :		# p 랑 연결 X
+	print(-1)
+else :
+	print(visited[q])
+
+# input
+# 9
+# 7 3
+# 7
+# 1 2
+# 1 3
+# 2 7
+# 2 8
+# 2 9
+# 4 5
+# 4 6
+# result
+# 3
