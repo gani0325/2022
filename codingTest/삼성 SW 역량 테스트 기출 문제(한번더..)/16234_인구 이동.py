@@ -68,13 +68,13 @@ N, L, R = map(int, input().split())
 graph = []
 for i in range(N) :
     graph.append(list(map(int, input().split())))
-visited = [[False] * N for _ in range(N)]
 
 dx = [1, 0, -1, 0]
 dy = [0, -1, 0, 1]
 
 day = 0
 while True :
+    visited = [[False] * N for _ in range(N)]
     stop = True         # True 이면 while 끝
 
     for i in range(N) :
