@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang = "kr">
+<head>
+    <meta charset = "utf-8">
+    <title>가니 게시글</title>
+</head>
+<body>
+    <table>
+        <!-- 데이터 전송 위해 form으로 묶기 -->
+        <form name = "fomr" method = "POST" action = "/write">
+        <tr>
+            <td>작성자</td>
+            <td><input type = "text" name = "name"></td>
+        </tr>
+        <tr>
+            <td>제목</td>
+            <td><input type = "text" name = "name"></td>
+        </tr>
+        <tr>
+            <td>내용</td>
+            <td><textarea name = "contents"></textarea></td>
+        </tr>
+        <tr>
+            <td colspan = "2"><input type = "submit"></td>
+        </tr>
+        </form>
+    </table>
+</body>
+</html>

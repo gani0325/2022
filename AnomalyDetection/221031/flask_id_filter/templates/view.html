@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang = "kr">
+<head>
+    <meta charset = "UTF-8">
+    <title>view</title>
+</head>
+
+<body>
+    <p>{{ result.title }}</p>
+    <p>{{ result.name }}</p>
+    <p>{{ result.contets }}</p>
+    <!-- |과 format_time을 사용해서 timestamp 값을 보기좋은 시간 값으로 바꿈 -->
+    <p>{{ result.pubdate|format_time }}</p>        
+    <p>{{ result.view }}</p>
+</body>
+</html>
