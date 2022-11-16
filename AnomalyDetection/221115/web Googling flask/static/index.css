@@ -1,0 +1,22 @@
+.box{
+    border:5px solid black;
+    width : 200px;
+    height: 100px;
+    display: inline-block;
+    /* 테두리(border)를 포함하여 사이즈를 계싼 */
+    box-sizing: border-box;         
+    margin : 0;
+    color : white;
+    font-weight: 900;
+    /* 글자를 중앙 정렬 */
+    text-align: center;
+    line-height: 90px;
+}
+
+.box1{
+    background-color: orange;
+}
+
+.box2{
+    background-color : blue;
+}
