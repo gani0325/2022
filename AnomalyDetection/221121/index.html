@@ -1,0 +1,216 @@
+<!-- <html>
+<body>
+ <script src="https://d3js.org/d3.v4.min.js"></script>
+ <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<div id="chart_div" style="width: 1800px; height: 1200px;"></div>
+
+<script type="text/javascript">
+    var raw_data = [];
+
+    d3.csv("data/test.csv", function(error, temp) {
+      console.log(error);
+      // temp.forEach(function (d) {
+      //   //console.log(d);
+      //   raw_data.push(d);
+        
+      // });
+      console.log(temp);
+
+      for (var i = 0; i < temp.length; i++) {
+		//years.push(data[i][0]);
+		raw_data.push(temp[i]["cnt_wait"]);
+	}
+
+
+      /// var arrayData = raw_data.toArrays();
+
+      // load current chart package
+      google.charts.load('current', {
+         packages: ['corechart'],
+      });
+
+      // set callback function when api loaded
+      google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+           // create data object with default value
+           let data = google.visualization.arrayToDataTable([
+          ['Time', 'CPU Usage'],
+          [0, 0],
+  ]);
+
+        // create options object with titles, colors, etc.
+        let options = {
+          title: 'CPU Usage',
+          hAxis: {
+            textPosition: 'none',
+          },
+          vAxis: {
+            title: 'Usage',
+          },
+        };
+
+        // draw chart on load
+        let chart = new google.visualization.LineChart(
+          document.getElementById('chart_div')
+        );
+
+        chart.draw(data, options);
+        
+
+        // max amount of data rows that should be displayed
+        let maxDatas = 50;
+        // interval for adding new data every 250ms
+        let index = 0;
+        console.log(raw_data[5]);
+        setInterval(function () {
+          // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
+          if (data.getNumberOfRows() > maxDatas) {
+            data.removeRows(0, data.getNumberOfRows() - maxDatas);
+          }
+         
+         data.addRow([index, raw_data[index]]);
+         
+         console.log(index)
+         console.log(raw_data[index])
+
+         chart.draw(data, options);
+         index++;
+
+        }, 5000);
+
+   }
+    });
+</script>
+</body>
+</html> -->
+
+
+<!-- <!DOCTYPE html>
+<head>
+ <meta charset="utf-8">
+ <meta http-equiv="X-UA-Compatible" content="IE=edge">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+
+ <meta name="HandheldFriendly" content="True">
+ <meta name="MobileOptimized" content="320">
+
+ <title>Google Graph and CSV</title>
+ <meta name="description" content="test">
+
+ <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+ <script src="jquery.csv.min.js"></script>
+ <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+
+<script type="text/javascript"> // load the visualisation API
+  google.load('visualization', '1', { packages: ['corechart', 'controls'] });
+</script>
+
+<script type="text/javascript">
+function drawVisualization() {
+   $.get("data/test.csv", function(csvString) {
+      // transform the CSV string into a 2-dimensional array
+      var arrayData = $.csv.toArrays(csvString, {onParseValue: $.csv.hooks.castToScalar});
+
+      // this new DataTable object holds all the data
+      var data = new google.visualization.arrayToDataTable(arrayData);
+      // CAPACITY - En-route ATFM delay - YY - CHART
+      var crt_ertdlyYY = new google.visualization.ChartWrapper({
+         chartType: 'LineChart',
+         containerId: 'crt_ertdlyYY',
+         dataTable: data,
+         options:{
+            width: 450, height: 160,
+            title: 'EU-wide en-route ATFM delays (year to date)',
+            titleTextStyle : {color: 'grey', fontSize: 11},
+         }
+      });
+      crt_ertdlyYY.draw();
+   });
+}
+google.setOnLoadCallback(drawVisualization)
+</script>
+
+<div id="crt_ertdlyYY"></div> -->
+
+
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
+
+
+    		<!-- Load d3.js and c3.js -->
+		<script src="javascripts/d3.v3.min.js" charset="utf-8"></script>
+		<script src="javascripts/c3.min.js"></script>
+
+		<!-- Load papaparse.js -->
+		<script src="javascripts/papaparse.min.js"></script>
+      <link href="css/style.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+
+    <div class='my-div'>
+		Real-Time Chart with Plotly.js
+	  </div>
+
+    <div class="wrapper">
+        <div id="graph"></div>
+        <script>
+            function getData() {
+                return Math.random();
+            }
+            // 데이터 불러오기
+      function parseData(createGraph) {
+	      Papa.parse("./data/test.csv", {
+		   download: true,
+		   complete: function(results) {
+			createGraph(results.data);
+	   	   }
+	      });
+      }
+
+
+	   var years = [];
+	   var CNT_WAIT = [];
+      function createGraph(data) {
+	   // 새로운 배열에 데이터 각각 주입
+	   for (var i = 1; i < data.length; i++) {
+		   years.push(data[i][0]);
+		   CNT_WAIT.push(data[i][1]);
+	   }
+
+      };
+   
+      parseData(createGraph);
+
+            
+            Plotly.newPlot('graph',[{
+                y: CNT_WAIT,
+                x: years,
+                type:'line'
+            }]);
+            
+            var cnt = 0;
+            var index = 0;
+            setInterval(function(){
+                //console.log(CNT_WAIT[index])
+                Plotly.extendTraces('graph',{ y:[[CNT_WAIT[index]]]}, [0]);
+                
+                cnt++;
+                index++;
+                if(cnt > 10) {
+                    Plotly.relayout('graph',{
+                        xaxis: {
+                            range: [cnt-10, cnt]
+                        }
+                    });
+                }
+                console.log(CNT_WAIT[index])
+            },500);
+      
+        </script>
+    </div>
+    </body>
+</html>

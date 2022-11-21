@@ -1,0 +1,110 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+   <title>Google Chart Example</title>
+   <script src="https://www.google.com/jsapi"></script>
+   <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+   <script src="jquery.csv-0.71.min.js"></script>
+  <script type='text/javascript'>
+        // wait till the DOM is loaded
+      $(function() {
+         // grab the CSV
+         $.get("data/test.csv", function(csvString) {
+            // display the contents of the CSV
+            $("#chart").html(csvString);
+         });
+      });
+
+// load the visualization library from Google and set a listener
+google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(drawChart);
+
+   function drawChart() {
+   // grab the CSV
+   $.get("./data/test.csv", function(csvString) {
+    console.log("hihi");
+      // transform the CSV string into a 2-dimensional array
+      var arrayData = $.csv.toArrays(csvString, {onParseValue: $.csv.hooks.castToScalar});
+      console.log("gggggg");
+      // this new DataTable object holds all the data
+      var data = new google.visualization.arrayToDataTable(arrayData);
+      // this view can select a subset of the data at a time
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0,1]);
+      console.log(data);
+
+     // set chart options
+     var options = {
+        title: "A Chart from a CSV!",
+        hAxis: {title: data.getColumnLabel(0), minValue: data.getColumnRange(0).min, maxValue: data.getColumnRange(0).max},
+        vAxis: {title: data.getColumnLabel(1), minValue: data.getColumnRange(1).min, maxValue: data.getColumnRange(1).max},
+        legend: 'none'
+     };
+
+     // create the chart object and draw it
+     var chart = new google.visualization.ScatterChart(document.getElementById('chart'));
+     chart.draw(view, options);
+  });
+}
+
+  
+
+    
+   </script>
+
+</head>
+<body>
+   <div id="chart">
+
+   </div>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Google Chart Example</title>
+   <script type = "text/javascript" src = "https://www.gstatic.com/charts/loaded.js"></script>
+   <script src="https://www.google.com/jsapi"></script>
+   <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+   <script src="jquery.csv-0.71.min.js"></script>
+   <script type='text/javascript'>
+
+// load the visualization library from Google and set a listener
+google.charts.load("current", {packages:["corechart", "line"]});
+google.charts.setOnLoadCallback(drawChart);
+
+   function drawChart() {
+    filename = "./data/test.csv";
+    $.get(filename, function(csvString) {
+      console.log("hihi");
+      // transform the CSV string into a 2-dimensional array
+      var arrayData = $.csv.toArrays(csvString, {onParseValue: $.csv.hooks.castToScalar});
+      drawchart(arrayData);
+    });
+  };
+
+  function drawchart(arrayData) {
+    var data = new google.visualization.arrayToDataTable(arrayData);
+    
+    // set chart options
+    var options = {
+        title: "A Chart from a CSV!",
+     };
+
+     // create the chart object and draw it
+     var chart = new google.visualization.ScatterChart(document.getElementById('chart'));
+     chart.draw(view, options);
+  };  
+
+    
+   </script>
+
+</head>
+<body>
+   <div id="chart">
+
+   </div>
+</body>
+</html>
