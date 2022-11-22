@@ -1,25 +1,36 @@
+// Streaming with Timestamp
+
 // 1. csv 로딩해서 전체적으로 공유하자
-var years = [];
-var CNT_WAIT = [];
+var years = new Array();
+var CNT_WAIT = new Array();
 
 function parseData() {
 	Papa.parse("./data/test.csv", {
 	download: true,
 	complete: function(results) {
+		console.log(results)
 		for (var i = 1; i < results.data.length; i++) {
 			years.push(results.data[i][0]);
 			CNT_WAIT.push(results.data[i][1]);
 			}
+			console.log(years);
 		}
-	})};
-
+	})
+};
 parseData();
 
-// 2. 그 다음 X 값을 가져오는 함수
+
+// 2. 그 다음 Y 값을 가져오는 함수
 var index = 0;
-function getValueFromCsv(index){
+function getYvalueFromCsv(index){
 	//csv 로딩
 	return CNT_WAIT[index];
+
+}
+// 그 다음 X 값 가져오는 함수
+function getXvalueFromCsv(index){
+	//csv 로딩
+	return years[index];
 
 }
 
@@ -27,13 +38,14 @@ function getValueFromCsv(index){
 var time = new Date();
 
 var data = [{
-	x: [time], 
-	y: [getValueFromCsv(index)],
+	x: [getXvalueFromCsv(index)], 
+	y: [getYvalueFromCsv(index)],
 	mode: 'lines',
 	line: {color: '#80CAF6'}
 }]
 
-Plotly.plot('graph', data);  
+
+Plotly.newPlot('graph', data);  
 
 // 그 다음 cnt 증가시키기
 var cnt = 0;
@@ -43,27 +55,28 @@ var interval = setInterval(function() {
 	var time = new Date();
 
 	var update = {
-		x:  [[time]],
-		y: [[getValueFromCsv(cnt)]]
+		x:  [[getXvalueFromCsv(cnt)]],
+		y: [[getYvalueFromCsv(cnt)]]
 	}
 	
-	console.log(getValueFromCsv(cnt))
+	console.log(getYvalueFromCsv(cnt))
+	console.log(getXvalueFromCsv(cnt))
+
 	var olderTime = time.setMinutes(time.getMinutes() - 1);
 	var futureTime = time.setMinutes(time.getMinutes() + 1);
 
 	var minuteView = {
-		xaxis: {
-		type: 'date',
-		range: [olderTime, futureTime]
-		}
-	};
+        xaxis: {
+			type: 'date',
+			range: [olderTime,futureTime]
+        }
+      };
 
-	// 기존 플롯의 개체를 업데이트
-	Plotly.relayout('graph', minuteView);
-	// 전체 플롯을 다시 그리는 것 보다, 기존에 올려서 그리기
+	// Plotly.relayout('graph', minuteView);
+	// 전체 플롯을 다시 그리는 것 보다, 기존에 업데이트 하면서 그리기
 	Plotly.extendTraces('graph', update, [0])
 
 	// cnt 가 100 이 되면 다시 시작
-	if(cnt === 100) clearInterval(interval);
-		cnt ++
-}, 1000);
+	//if(++cnt === 100) clearInterval(interval);
+	++cnt;
+}, 500);
