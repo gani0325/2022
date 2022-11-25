@@ -1,0 +1,180 @@
+<html> 
+    <head> 
+      <link rel="stylesheet" 
+        href="https://pyscript.net/alpha/pyscript.css" /> 
+      <script defer 
+        src="https://pyscript.net/alpha/pyscript.js"></script> 
+<py-env>
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - paths :
+    - ./common.py
+</py-env>
+    </head>
+  <body> 
+    <link rel="stylesheet" href="pytable.css"/>
+    <py-script>
+    import pandas as pd
+    from pyodide.http import open_url
+    from common import *
+    import numpy as np
+
+    from datetime import datetime
+
+    <!-- 경고 문구 제거 -->
+    import warnings
+    warnings.filterwarnings( 'ignore' )
+
+    <!-- 판다스에서 csv 를 데이터 프레임으로 읽어옴 -->
+    SalesData = pd.read_csv(open_url(
+      "http://dreamplan7.cafe24.com/pyscript/csv/avocado.csv"
+    ))      
+
+    <!-- # 2개 필드만 추려서 데이터 프레임을 다시 만듬 -->
+    SalesData = SalesData[[
+      'Date', 
+      'Total Volume'
+    ]]   
+
+    SalesData.columns = [
+      'Day', 
+      'Amount'
+    ]
+
+    <!-- 주간 매출량 그룹 -->
+    WeekdaysSalesData = SalesData.fillna(0) \
+      .groupby('Day', as_index=False)[['Amount']] \
+      .sum() \
+      .sort_values(
+        by='Day', 
+        ascending=True
+      )
+
+    <!-- 날짜(시간값) 추가 -->
+    WeekdaysSalesData.insert(1, 'Day(timeValue)',
+      '',
+      True)
+    
+    for i in WeekdaysSalesData['Day'].index:
+        WeekdaysSalesData['Day(timeValue)'].loc[i]=time.mktime(
+            datetime.strptime(
+                WeekdaysSalesData['Day'].loc[i], 
+                '%Y-%m-%d'
+            ).timetuple()
+        )
+
+    <!-- 10000으로 나눈 매출량 필드 추가 -->
+    WeekdaysSalesData.insert(2, 'Amount(10000)', 
+    WeekdaysSalesData['Amount']/10000, 
+      True)
+
+    <!-- 훈련학습용으로 날짜를 연도, 월, 일로 나눈다 -->
+    WeekdaysSalesData.insert(4, 'year', '', True)
+    WeekdaysSalesData.insert(5, 'month', '', True)
+    WeekdaysSalesData.insert(6, 'day', '', True)
+    WeekdaysSalesData.insert(7, 'week', '', True)
+
+    for i in WeekdaysSalesData['Day'].index:
+      temp = str(WeekdaysSalesData['Day'].loc[i]).split('-')
+      year = int(temp[0])
+      month = int(temp[1])
+      day = int(temp[2])
+      WeekdaysSalesData['year'].loc[i] = year
+      WeekdaysSalesData['month'].loc[i] = month
+      WeekdaysSalesData['day'].loc[i] = day
+      WeekdaysSalesData['week'].loc[i] = str(
+        datetime(year, month, day).isocalendar()[1]
+      )
+
+    createElementDiv(
+      document, 
+      Element, 
+      'output2'
+    ).write(WeekdaysSalesData)
+
+    WeekdaysSalesDataTrain_numpy = WeekdaysSalesData[['Day(timeValue)', 'year', 'month', 'day', 'week']].to_numpy()
+    WeekdaysSalesDataTest_numpy = WeekdaysSalesData['Amount(10000)'].to_numpy()
+
+    from sklearn.model_selection import train_test_split
+
+    X_train, X_test, y_train, y_test = \
+      train_test_split(
+        WeekdaysSalesDataTrain_numpy, 
+        WeekdaysSalesDataTest_numpy,
+        random_state=100,
+        shuffle=False)
+
+    <!-- 선형 회귀 알고리즘 -->
+    <!-- 훈련, 최적의 그래프를 찾아준다 -->
+    from sklearn.linear_model import LinearRegression
+    lr = LinearRegression()
+    lr.fit(X_train, y_train)
+
+    y_train_predict = lr.predict(X_train)
+    y_test_predict = lr.predict(X_test)
+
+    import matplotlib.pyplot as plt
+    import matplotlib as mat
+
+    <!-- 그래프 -->
+    fig = plt.figure(
+      figsize=(15, 7)
+    )
+    plt.xticks(WeekdaysSalesData['Day(timeValue)'].to_numpy(), WeekdaysSalesData[['Day']].to_numpy()[:,0], rotation=90)
+
+    plt.title('Weekdays Avocado SalesAmount')
+
+    plt.plot(        
+        X_train[:,0],
+        y_train,
+        marker='o',
+        color='#c14549',
+        label='Original'
+    )
+    plt.plot(        
+        X_train[:,0],
+        y_train_predict,
+        marker='d',
+        color='blue',
+        label='Train pattern'
+    )
+
+    plt.plot(        
+        X_test[:, 0],
+        y_test,
+        marker='o',
+        color='#c14549'
+    )
+
+    plt.plot(        
+        X_test[:, 0],
+        y_test_predict,
+        marker='d',
+        color='green',
+        label='Predict pattern'
+    )
+
+    plt.xlabel('Day')
+    plt.ylabel('Day(timeValue)')
+
+    plt.legend(
+      shadow=True
+    )
+
+    ax = plt.gca()
+    <!-- 축만 그리드 -->
+    ax.xaxis.grid(True)
+
+    <!-- 배경색, 마진 조정 -->
+    ax.set_facecolor('#e8e7d2')
+    ax.margins(x=0.01, y=0.02)
+
+    <!-- 주위 이상한 여백 없애기 -->
+    fig.tight_layout() 
+    fig
+
+</py-script> 
+  </body> 
+</html>
