@@ -1,0 +1,85 @@
+<html>
+    <head>
+    <title>
+    Read CSV with Pandas using PyScript 
+    </title>
+    
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+
+    <style type="text/css">
+    table.dataframe th {
+      background-color: #EA6153 !important;
+      color: white !important;
+      text-align:center !important;
+      padding: 5px 15px;
+      font-size:9pt !important;
+    }
+    table.dataframe td {
+      color: black !important;
+      text-align:center !important;
+      padding: 5px 15px;
+      font-size:9pt !important;
+    }
+
+    table.dataframe tr {
+        background-color: #FFFFFF !important;
+    }
+
+    table.dataframe tr:nth-child(odd) {
+        background-color: #E9E9E9 !important;
+    }
+
+    </style>
+    
+    <py-env>
+        - pandas
+        - matplotlib
+    </py-env>
+
+</head>
+
+<body style="padding:20px;">
+    <h2>파이스크립트에서 판다스(Pandas)로 CSV 읽기</h1>
+    <div id="pltdiv"></div>
+    <div id="csv" style="margin-top:10px"></div>
+    <py-script>
+        import pandas as pd 
+        from pyodide.http import open_url
+
+        # URL 에서 csv 데이터를 읽어 판다스 배열로 변환합니다.
+        df = pd.read_csv(open_url("BigBasketProducts.csv"))
+
+        # 브랜드별 평점 평균을 구할 수 있도록 소스를 구성 + Nan 값을 0으로 + rating 기준으로 정렬
+        df_group = df.fillna(0).groupby('brand')[['rating']].mean().sort_values(by='rating', ascending=False)
+
+        #df_group.columns = ['brand', 'rating']
+
+        # 모든 행 출력
+        pd.set_option('display.max_rows', None)
+
+        # 출력할 HTML 요소를 선택
+        csv = Element('csv')
+
+        # 해당 HTML 요소에 평점 평균의 결과를 출력
+        csv.write(df_group)
+
+        import matplotlib.pyplot as plt
+
+        plt.rcParams.update({'font.size': 7})
+        fig = plt.figure(figsize=(5, 20))    
+
+        plt.plot(
+          df_group['rating'].to_list(),
+          df_group.index.to_list(),
+          label='Rating of Brand' )
+        
+        plt.gca().invert_yaxis()
+        
+        pltdiv = Element('pltdiv')    
+        pltdiv.write(fig)
+      </py-script>
+    
+    </body>
+    
+    </html>
