@@ -14,9 +14,12 @@ function parseData() {
 			CNT_WAIT.push(results.data[i][1]);
 			}
 			console.log(years);
+
+		
 		}
 	})
 };
+
 parseData();
 
 
@@ -25,13 +28,12 @@ var index = 0;
 function getYvalueFromCsv(index){
 	//csv 로딩
 	return CNT_WAIT[index];
-
 }
+
 // 그 다음 X 값 가져오는 함수
 function getXvalueFromCsv(index){
 	//csv 로딩
 	return years[index];
-
 }
 
 // 3. 시간을 활용해서 그다음 값 업데이트 하기
@@ -68,15 +70,16 @@ var interval = setInterval(function() {
 	var minuteView = {
         xaxis: {
 			type: 'date',
-			range: [olderTime,futureTime]
+			range: [olderTime, futureTime]
         }
       };
+	console.log(futureTime - olderTime);
 
 	// Plotly.relayout('graph', minuteView);
 	// 전체 플롯을 다시 그리는 것 보다, 기존에 업데이트 하면서 그리기
 	Plotly.extendTraces('graph', update, [0])
 
 	// cnt 가 100 이 되면 다시 시작
-	//if(++cnt === 100) clearInterval(interval);
+	// if(++cnt === 100) clearInterval(interval);
 	++cnt;
 }, 500);
