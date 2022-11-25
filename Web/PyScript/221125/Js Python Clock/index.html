@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Js VS Python Clock</title>
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <py-env>
+    - paths:
+      - ./utils.py
+    </py-env>
+  </head>
+
+  <body>
+    <div >js clock time: <label id="jsClock"></label></div>
+    <div >py clock time: <label id="pyClock"></label></div>
+
+    <py-script>
+        import utils
+        <!-- sync 함수는 await에서 suspend되고, await 대상의 값이 준비되면 resume되어 실행을 이어간다 -->
+        import asyncio
+        
+        <!-- async def로 네이티브 코루틴을 만듦 -->
+        async def foo():
+          while True:
+            <!-- # asyncio(Asynchronous I/O)는 비동기 프로그래밍을 위한 모듈 -->
+            await asyncio.sleep(1)
+            output = utils.now()
+            pyscript.write("pyClock", output)
+        
+        <!-- # foo가 끝날 때까지 기다림 -->
+        pyscript.run_until_complete(foo())         
+    </py-script>
+  </body>
+</html>
+
+<script>
+  setInterval(()=>{
+      var timer = new Date();
+      var h = timer.getHours();
+      var m = timer.getMinutes();
+      var s = timer.getSeconds();
+      document.getElementById('jsClock').innerHTML = `${h} : ${m} : ${s}`;
+  },1000);
+</script>
