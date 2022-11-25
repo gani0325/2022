@@ -1,0 +1,90 @@
+<html> 
+    <head> 
+      <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" /> 
+      <script defer src="https://pyscript.net/alpha/pyscript.js"></script> 
+      <py-env>
+        - pandas
+        - matplotlib
+        - seaborn
+      </py-env>
+    </head>
+  <body> 
+    <link rel="stylesheet" href="pytable.css"/>
+    <py-script>
+      <!-- 표를 HTML 화면에 추가하는 부분을 파이썬 함수로 단순화 -->
+      def createElementDiv(name):
+          element = document.createElement('div')
+          element.id = name
+          document.body.append(element)
+          return Element(name)
+          
+      import pandas as pd
+      from pyodide.http import open_url
+
+      import seaborn as sns      
+      import numpy as np
+      
+      <!-- 판다스에서 csv 를 데이터 프레임으로 읽어옴 -->
+      df = pd.read_csv(open_url("http://dreamplan7.cafe24.com/pyscript/csv/avocado.csv"))
+
+      <!-- Total Volumn 값을 10,000으로 나누어 새로운 Volume2 이라는 값을 생성 (round 를 통해 첫째 자리까지 소수자리 표시) -->
+      df.insert(2, 'month', df['Date'].str[:7], True)
+      df.insert(5, 'Volume2', 
+        round(df['Total Volume']/10000, 1), 
+      True)
+
+      createElementDiv('output1').write(df)
+      
+      <!-- Volume2으로 월별 매출량 조사 -->
+      df_group = df.fillna(0).groupby('month')[['Total Volume']].sum().sort_values(by='month', ascending=True)
+      
+
+      <!-- 월별 매출량 조사 -->
+      df_group = df.fillna(0) \
+      .groupby('month')[['Volume2']] \
+      .sum() \
+      .sort_values(
+      by='month', 
+      ascending=True
+      )
+      
+      createElementDiv('output1').write(df_group)
+
+      <!-- 아보카도 그래프 기리기 -->
+      import matplotlib.pyplot as plt      
+
+      <!-- 그래프 크기 조정 -->
+      fig = plt.figure(figsize=(15, 10))
+      plt.title('Month Avocado sales');
+      
+      <!-- 글씨를 45도 회전 -->
+      plt.xticks(rotation=45)
+      
+      <!-- 상대 변화를 확실히 보기 위해 2억 5천만부터 시작해서 6억까지 Y축을 지정 -->
+      plt.ylim(25000, 60000)
+      <!-- y축의 눈금을 지정 -->
+      plt.yticks(np.arange(25000, 60000, 5000))
+
+      <!-- # 막대 그래프 -->
+      plt.bar(
+        df_group.index.to_list(), 
+        df_group['Volume2'].to_list(),
+        color=sns.color_palette(
+          'rainbow_r', 
+          12
+        ),
+        edgecolor='black'
+      )
+      
+      plt.xlabel('Year/Month')
+      plt.ylabel('Sales(units:10000)')
+      
+      ax = plt.gca()
+      ax.set_facecolor('#e8e7d2')
+
+      <!-- 그리드라는 안내선을 추가 -->
+      plt.grid()
+      fig
+    </py-script> 
+  </body> 
+</html>

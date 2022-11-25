@@ -1,0 +1,22 @@
+table.dataframe th {
+    background-color: #EA6153 !important;
+    color: white !important;
+    text-align:center !important;
+    padding: 5px 15px;
+    font-size:9pt !important;
+  }
+  
+  table.dataframe td {
+    color: black !important;
+    text-align:center !important;
+    padding: 5px 15px;
+    font-size:9pt !important;
+  }
+  
+  table.dataframe tr {
+      background-color: #FFFFFF !important;
+  }
+  
+  table.dataframe tr:nth-child(odd) {
+      background-color: #E9E9E9 !important;
+  }
