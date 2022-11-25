@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>
+Read CSV with Pandas using PyScript  
+</title>
+<link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+<script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+<py-env>
+    - pandas
+</py-env>
+</head>
+<body>
+  <style type="text/css">
+  table.dataframe th {
+    border: 1px  black solid;
+    background-color:black;
+    color: white !important;
+    padding: 2px 5px;
+  }
+  table.dataframe td {
+    border: 1px  black solid !important;
+    color: black !important;
+    padding: 2px 5px;
+  }
+  </style> 
+  <h1>파이스크립트에서 판다스(Pandas)로 CSV 읽기</h1>
+  <div id="csv"></div>
+  <py-script>
+    import pandas as pd 
+    from pyodide.http import open_url
+
+    # URL 에서 csv 데이터를 읽어 판다스 배열로 변환합니다.
+    df = pd.read_csv(open_url("http://dreamplan7.cafe24.com/pyscript/py4.csv"))
+
+    # 출력할 HTML 요소를 선택
+    csv = Element('csv')
+
+    # 해당 HTML 요소에 결과를 출력합니다.
+    csv.write(df)
+  </py-script>
+
+</body>
+
+</html>
+
+
+
