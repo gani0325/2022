@@ -1,0 +1,94 @@
+<html> 
+    <head> 
+      <link rel="stylesheet" 
+        href="https://pyscript.net/alpha/pyscript.css" /> 
+      <script defer 
+        src="https://pyscript.net/alpha/pyscript.js"></script> 
+      <py-env>
+        - pandas
+        - matplotlib
+        - seaborn
+      </py-env>
+    </head>
+  <body> 
+    <link rel="stylesheet" href="pytable.css"/>
+
+    <py-script>
+    def createElementDiv(name):
+        element = document.createElement('div')
+        element.id = name
+        document.body.append(element)
+        return Element(name)
+
+    import pandas as pd
+    from pyodide.http import open_url
+    import numpy as np
+
+    <!-- 판다스에서 csv 를 데이터 프레임으로 읽어옴 -->
+    SalesData = pd.read_csv(open_url(
+      "http://dreamplan7.cafe24.com/pyscript/csv/avocado.csv"
+    ))      
+
+    <!-- # 2개 필드만 추려서 데이터 프레임을 다시 만듬 -->
+    SalesData = SalesData[[
+      'Date', 
+      'Total Volume'
+    ]]   
+
+    SalesData.columns = [
+      'Day', 
+      'Amount'
+    ]
+
+    <!-- 주간 매출량 그룹 -->
+    WeekdaysSalesData = SalesData.fillna(0) \
+      .groupby('Day', as_index=False)[['Amount']] \
+      .sum() \
+      .sort_values(
+        by='Day', 
+        ascending=True
+      )
+
+    <!-- 10000으로 나눈 매출량 필드 추가 -->
+    WeekdaysSalesData.insert(2, 'Amount(10000)', 
+    WeekdaysSalesData['Amount']/10000, 
+      True)
+
+    createElementDiv('output2').write(WeekdaysSalesData)
+
+    import matplotlib.pyplot as plt
+    import matplotlib as mat
+
+    fig = plt.figure(figsize=(15, 7))
+
+    plt.title('Weekdays Avocado SalesAmount');
+    plt.xticks(rotation=90)
+
+    <!-- 꺾은선 그래프 -->
+    plt.plot(        
+        WeekdaysSalesData['Day'].to_list(),
+        WeekdaysSalesData['Amount(10000)'].to_list(),
+        marker='o',
+        color='green', 
+        label='Amount'
+    )
+
+    <!-- 축 라벨 표시 -->
+    plt.xlabel('Day')
+    plt.ylabel('Amount (unit : 10000)')
+
+    <!-- 범례 표시 -->
+    plt.legend()
+
+    ax = plt.gca()
+    <!-- X축만 그리드 -->
+    ax.xaxis.grid(True)
+    <!-- 마진 조정 -->
+    ax.margins(x=0.01, y=0.02)
+    <!-- 주위 이상한 여백 없애기 -->
+    fig.tight_layout() 
+    fig
+
+</py-script> 
+  </body> 
+</html>
