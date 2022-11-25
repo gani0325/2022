@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>파이썬 인터프리터</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+
+    <py-env>
+        - matplotlib
+        - pandas
+    </py-env>
+  </head>
+
+  <body>
+    <h1><b>pyscript REPL</b></h1>
+    파이썬 명령어 입력 후 입력상자 우측의 화살표 버튼을 클릭하거나 
+    또는 Shift-ENTER 를 눌러 실행이 가능합니다.
+    <br>
+    <div>
+      <!-- 명령어 실행 후 다음 상자를 자동으로 생성 -->
+      <py-repl auto-generate="true"> </py-repl>
+    </div>
+  </body>
+</html>
