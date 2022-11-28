@@ -5,7 +5,7 @@
 
 // 데이터 불러오기
 function parseData(createGraph) {
-	Papa.parse("../data/test.csv", {
+	Papa.parse("./data/test.csv", {
 		download: true,
 		complete: function(results) {
 			createGraph(results.data);
