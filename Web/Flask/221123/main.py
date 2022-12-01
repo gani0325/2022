@@ -42,7 +42,14 @@ def make_prediction():
         # 결과 리턴
         return render_template('index.html', label=label)
 
+@app.route('/buttonAction', methods=['POST'])
+der buttonAction():
+    # 예측을 한다.
+    # 저정한다.
+    # 클라이언트로 전달한다/.
+    
 
+    
 if __name__ == '__main__':
     # 모델 로드
     # ml/model.py 선 실행 후 생성
