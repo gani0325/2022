@@ -1,0 +1,44 @@
+div {
+    display:inline-block;
+}
+
+.day {
+    position:fixed;
+    background-color:rgb(153, 102, 153);
+    top:0px;
+    width:1000px;
+    height:30pt;
+    font-size: 15pt;
+}
+
+.box1 {
+    position:relative;
+    top:30pt;
+    left:0px;
+    width:1000px;
+    height:1200px;
+    font-size: 15pt;
+    font-weight: normal;
+    background-color:rgb(187, 139, 217);
+}
+
+.box1 .box2 {
+    position:absolute;
+    top:100pt;
+    left:0px;
+    width:915px;
+    height:900px;
+    font-size: 15pt;
+    font-weight:lighter;
+    background-color:rgb(209, 194, 212);
+    padding:20px;
+    margin:20px;
+}
+
+body {
+    text-align:center;
+}
+
+.image{
+    border-radius: 35%;
+}
